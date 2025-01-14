@@ -32,7 +32,33 @@ async function run() {
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
-    // district related apis
+    // collection
+    const districtCollection = client.db('bloodBD').collection('district');
+    const upazilaCollection = client.db('bloodBD').collection('upazila');
+
+
+
+    // district related collection
+
+    app.get('/district', async(req, res) =>{
+      const cursor = districtCollection.find();
+      const result = await cursor .toArray();
+      res.send(result);
+
+    })
+
+
+    // upazila releted apis
+
+    app.get('/upazila',async(req,res) =>{
+      const cursor = upazilaCollection.find();
+      const result = await cursor .toArray();
+      res.send(result)
+    })
+
+
+
+    
 
     
 
