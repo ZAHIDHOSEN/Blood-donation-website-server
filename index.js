@@ -35,6 +35,16 @@ async function run() {
     // collection
     const districtCollection = client.db('bloodBD').collection('district');
     const upazilaCollection = client.db('bloodBD').collection('upazila');
+    const usersCollection = client.db('bloodBD').collection('users');
+
+
+    // user related apis
+
+    app.post('/users', async(req, res)=>{
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result)
+    })
 
 
 
