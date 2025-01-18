@@ -165,10 +165,41 @@ async function run() {
     // requests related apis
     app.post('/requests', async(req, res) =>{
       const request = req.body;
+      const newRequest = {
+        ...request, 
+        donationStatus: "pending"
+      }
      
-      const result = await requestsCollection.insertOne(request);
+      const result = await requestsCollection.insertOne(newRequest);
       res.send(result)
     })
+
+
+    
+
+    app.get('/requests', async(req, res) =>{
+      const email = req.query.email;
+      const query ={"requester-email" : email}
+      const result = await requestsCollection.find(query).toArray();
+      res.send(result);
+    })
+
+    app.delete('/requests/:id',verifyToken, async(req,res) =>{
+      const id = req.params.id;
+      const query ={ _id: new ObjectId(id)}
+      const result = await requestsCollection.deleteOne(query);
+      res.send(result);
+
+    })
+
+    app.get('/requests/:id', async(req,res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await requestsCollection.findOne(query);
+      res.send(result)
+    })
+
+  
 
     // district related collection
 
@@ -199,3 +230,11 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`This is blood donation website : ${port}`);
 });
+
+
+
+// app.get('/requests', async(req, res) =>{
+
+//   const result = await requestsCollection.find().toArray();
+//   res.send(result);
+// })
