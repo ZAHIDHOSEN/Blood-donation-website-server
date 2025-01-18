@@ -199,6 +199,31 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/requests/:id', async(req, res) =>{
+      const item = req.body;
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $set: {
+          recipentName : item.recipentName,
+          district : item.district,
+          upazila: item.upazila,
+          hospitalName : item.hospitalName,
+          address : item.address,
+          group : item.group,
+          date: item.date,
+          time: item.time,
+          message: item.message
+
+
+          
+        }
+      }
+      const result = await requestsCollection.updateOne(filter, updatedDoc)
+      res.send(result);
+
+    })
+
   
 
     // district related collection
