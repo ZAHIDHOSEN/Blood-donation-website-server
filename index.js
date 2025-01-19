@@ -36,12 +36,13 @@ async function run() {
     const upazilaCollection = client.db("bloodBD").collection("upazila");
     const usersCollection = client.db("bloodBD").collection("users");
     const requestsCollection = client.db("bloodBD").collection("requests");
+    const blogsCollection = client.db("bloodBD").collection("blogs");
 
     // jwt related apis
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "5h",
+        expiresIn: "10h",
       });
       res.send({ token });
     });
@@ -174,6 +175,14 @@ async function run() {
       res.send(result)
     })
 
+    // total request admin home
+
+    app.get('/requests/adminHome',verifyToken, verifyAdmin, async(req,res) =>{
+      const result = await requestsCollection.find().toArray();
+      res.send(result);
+
+    })
+
 
     
 
@@ -182,6 +191,12 @@ async function run() {
       const query ={"requester-email" : email}
       const result = await requestsCollection.find(query).toArray();
       res.send(result);
+    })
+
+    // admin request
+    app.get('/requests/admin',verifyToken, verifyAdmin, async(req, res)=>{
+      const result = await requestsCollection.find().toArray();
+      res.send(result)
     })
 
     app.delete('/requests/:id',verifyToken, async(req,res) =>{
@@ -223,6 +238,33 @@ async function run() {
       res.send(result);
 
     })
+
+    // blogs related apis
+
+    app.post('/blogs', async(req, res) =>{
+      const blog = req.body;
+      const result = await blogsCollection.insertOne(blog);
+      res.send(result)
+    })
+
+    app.get('/blogs', async(req, res) =>{
+      const result = await blogsCollection.find().toArray();
+      res.send(result)
+
+    })
+
+
+
+  
+
+    app.delete('/blogs/:id', async(req,res) =>{
+      const id = req.params.id;
+      const query ={_id: new ObjectId(id)}
+      const result = await blogsCollection.deleteOne(query)
+      res.send(result)
+    })
+
+
 
   
 
