@@ -193,6 +193,21 @@ async function run() {
       res.send(result);
     })
 
+
+    app.get('/requests/public', async(req,res) =>{
+      const query = { donationStatus: "pending"}
+      const result = await requestsCollection.find(query).toArray();
+      res.send(result)
+
+    })
+
+    app.get('/requests/public/:id', verifyToken,async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await requestsCollection.findOne(query);
+      res.send(result);
+    })
+
     // admin request
     app.get('/requests/admin',verifyToken, verifyAdmin, async(req, res)=>{
       const result = await requestsCollection.find().toArray();
@@ -264,12 +279,7 @@ async function run() {
 
   
 
-    // app.delete('/blogs/:id', async(req,res) =>{
-    //   const id = req.params.id;
-    //   const query ={_id: new ObjectId(id)}
-    //   const result = await blogsCollection.deleteOne(query)
-    //   res.send(result)
-    // })
+
 
 
 
@@ -306,9 +316,3 @@ app.listen(port, () => {
 });
 
 
-
-// app.get('/requests', async(req, res) =>{
-
-//   const result = await requestsCollection.find().toArray();
-//   res.send(result);
-// })
