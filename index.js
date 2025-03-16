@@ -46,6 +46,7 @@ async function run() {
     const usersCollection = client.db("bloodBD").collection("users");
     const requestsCollection = client.db("bloodBD").collection("requests");
     const blogsCollection = client.db("bloodBD").collection("blogs");
+    const contactCollection = client.db("bloodBD").collection("contacts");
 
     // jwt related apis
     app.post("/jwt", async (req, res) => {
@@ -309,6 +310,15 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    // contact collection  
+
+    app.post('/contact',async(req,res)=>{
+      const body = req.body
+      const result = await contactCollection.insertOne(body)
+      console.log(result);
+      res.send(result)
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
