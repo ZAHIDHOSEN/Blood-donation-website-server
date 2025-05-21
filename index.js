@@ -1,8 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const Stripe = require('stripe');
 const app = express();
 require("dotenv").config();
+
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
@@ -18,6 +21,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.1befr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -284,6 +288,52 @@ async function run() {
       const blog = await blogsCollection.findOne(query);
       res.send(blog);
     });
+
+    // donate related 
+
+    // app.post('/create-payment-intent',verifyToken, async (req, res) => {
+    //   const { price } = req.body;
+    
+    //   if (!price) {
+    //     return res.status(400).json({ error: 'Missing price in request body' });
+    //   }
+    
+    //   try {
+    //     const paymentIntent = await stripe.paymentIntents.create({
+    //       amount: Math.round(price * 100), // Stripe uses cents
+    //       currency: 'usd',
+    //       payment_method_types: ['card'],
+    //     });
+    
+    //     res.send({
+    //       clientSecret: paymentIntent.client_secret,
+    //     });
+    
+    //   } catch (error) {
+    //     console.error('Error creating PaymentIntent:', error);
+    //     res.status(500).json({ error: 'Failed to create PaymentIntent' });
+    //   }
+    // });
+
+       app.post('/create-payment-intent',  async(req, res) =>{
+      const {price} = req.body;
+      const amount = parseInt(price * 100);
+      console.log(amount);
+
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+
+      })
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
+
+
+
+    })
 
 
 
